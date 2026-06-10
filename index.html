@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Devon Reyes Web Design — Websites for Local Businesses in Cypress & Los Alamitos</title>
+  <meta name="description" content="Custom website design and builds for local businesses in Cypress, Los Alamitos, and Orange County, CA. See live work by Devon Reyes Web Design.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #111116;
+      --card-bg: #18181d;
+      --chrome-bg: #1e1e24;
+      --border: #2e2e38;
+      --text: #f0f0f0;
+      --muted: #888;
+      --accent-from: #9E7AFF;
+      --accent-to: #FE8BBB;
+    }
+
+    body {
+      background: radial-gradient(ellipse at 50% -10%, #1d1530 0%, var(--bg) 55%);
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 72px 24px;
+    }
+
+    /* ── Hero ─────────────────────────────────── */
+    .hero {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .hero-label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent-from);
+      border: 1px solid #2a1f44;
+      background: #16102a;
+      border-radius: 100px;
+      padding: 5px 14px;
+      margin-bottom: 22px;
+    }
+
+    .hero-title {
+      font-size: clamp(36px, 5.5vw, 68px);
+      font-weight: 700;
+      letter-spacing: -0.035em;
+      line-height: 1.08;
+      color: #fff;
+    }
+
+    .hero-sub {
+      font-size: 16px;
+      color: var(--muted);
+      margin-top: 16px;
+      line-height: 1.65;
+    }
+
+    /* ── Grid ─────────────────────────────────── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      max-width: 1180px;
+      width: 100%;
+    }
+
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: 1fr; max-width: 420px; }
+    }
+
+    /* ── Card (Magic Card border + Glare Hover) ── */
+    .card {
+      border-radius: 14px;
+      background:
+        linear-gradient(var(--card-bg) 0 0) padding-box,
+        radial-gradient(
+          220px circle at var(--mx, -220px) var(--my, -220px),
+          var(--accent-from),
+          var(--accent-to),
+          var(--border) 100%
+        ) border-box;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+      color: inherit;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 24px 64px rgba(0,0,0,0.55);
+    }
+
+    /* Glare sweep */
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      pointer-events: none;
+      border-radius: inherit;
+      background-image: linear-gradient(
+        -45deg,
+        transparent 58%,
+        rgba(255,255,255,0.14) 68%,
+        transparent 78%,
+        transparent 100%
+      );
+      background-size: 260% 260%;
+      background-position: -100% -100%;
+      transition: background-position 680ms ease-in-out;
+    }
+
+    .card:hover::before {
+      background-position: 110% 110%;
+    }
+
+    /* ── Browser chrome ───────────────────────── */
+    .chrome {
+      background: var(--chrome-bg);
+      border-bottom: 1px solid var(--border);
+      padding: 9px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dots {
+      display: flex;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot.r { background: #ff5f57; }
+    .dot.y { background: #febc2e; }
+    .dot.g { background: #28c840; }
+
+    .url-bar {
+      flex: 1;
+      background: #111116;
+      border: 1px solid #2a2a32;
+      border-radius: 5px;
+      padding: 3px 10px;
+      font-size: 10.5px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: 0.01em;
+    }
+
+    /* ── Preview area ─────────────────────────── */
+    .preview {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+      background: #141418;
+    }
+
+    .preview iframe {
+      width: 200%;
+      height: 200%;
+      transform: scale(0.5);
+      transform-origin: top left;
+      pointer-events: none;
+      border: none;
+    }
+
+    /* Screenshot fallback (swap iframe for img if sites block framing) */
+    .preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+      display: block;
+    }
+
+    /* Hover overlay */
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.52);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.22s ease;
+      z-index: 5;
+      backdrop-filter: blur(2px);
+    }
+
+    .card:hover .overlay { opacity: 1; }
+
+    .view-btn {
+      background: #fff;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 22px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      transform: translateY(4px);
+      transition: transform 0.22s ease;
+    }
+
+    .card:hover .view-btn { transform: translateY(0); }
+
+    /* ── Card body ────────────────────────────── */
+    .card-body {
+      padding: 16px 18px 18px;
+    }
+
+    .card-niche {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-from);
+      margin-bottom: 5px;
+    }
+
+    .card-name {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 5px;
+    }
+
+    .card-desc {
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    /* ── Footer ───────────────────────────────── */
+    .site-footer {
+      margin-top: 72px;
+      text-align: center;
+      max-width: 560px;
+    }
+
+    .footer-services {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+
+    .footer-contact {
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .footer-contact a {
+      color: var(--accent-from);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .footer-contact a:hover { text-decoration: underline; }
+
+    .footer-legal {
+      font-size: 12px;
+      color: #5a5a64;
+      margin-top: 18px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card, .card::before, .overlay, .view-btn { transition: none; }
+      .card:hover { transform: none; }
+      .card:hover::before { background-position: -100% -100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hero">
+    <span class="hero-label">Devon Reyes Web Design</span>
+    <h1 class="hero-title">Websites for Local Businesses</h1>
+    <p class="hero-sub">Custom design and full builds for businesses in Cypress, Los Alamitos, and across Orange County.<br>Here's my work — click any card to see it live.</p>
+  </div>
+
+  <div class="grid">
+
+    <!-- ── Card 1 ─────────────────────────────── -->
+    <a class="card" href="fitness.html" target="_blank" rel="noopener noreferrer">
+      <div class="chrome">
+        <div class="dots">
+          <div class="dot r"></div>
+          <div class="dot y"></div>
+          <div class="dot g"></div>
+        </div>
+        <div class="url-bar">demo · apex-performance</div>
+      </div>
+      <div class="preview">
+        <iframe src="fitness.html" loading="lazy" scrolling="no" tabindex="-1"></iframe>
+        <div class="overlay">
+          <button class="view-btn">View Site ↗</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-niche">Fitness / Training</p>
+        <h3 class="card-name">APEX Performance</h3>
+        <p class="card-desc">Bold personal training brand with program listings, trainer bios, pricing tiers, and lead capture.</p>
+      </div>
+    </a>
+
+    <!-- ── Card 2 ─────────────────────────────── -->
+    <a class="card" href="bakery.html" target="_blank" rel="noopener noreferrer">
+      <div class="chrome">
+        <div class="dots">
+          <div class="dot r"></div>
+          <div class="dot y"></div>
+          <div class="dot g"></div>
+        </div>
+        <div class="url-bar">demo · flour-and-story</div>
+      </div>
+      <div class="preview">
+        <iframe src="bakery.html" loading="lazy" scrolling="no" tabindex="-1"></iframe>
+        <div class="overlay">
+          <button class="view-btn">View Site ↗</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-niche">Food & Bakery</p>
+        <h3 class="card-name">Flour & Story Bakery</h3>
+        <p class="card-desc">Warm artisan bakery with full menu, custom order section, brand story, and online ordering CTA.</p>
+      </div>
+    </a>
+
+    <!-- ── Card 3 ─────────────────────────────── -->
+    <a class="card" href="https://www.cupreneserum.com" target="_blank" rel="noopener noreferrer">
+      <div class="chrome">
+        <div class="dots">
+          <div class="dot r"></div>
+          <div class="dot y"></div>
+          <div class="dot g"></div>
+        </div>
+        <div class="url-bar">cupreneserum.com</div>
+      </div>
+      <div class="preview">
+        <iframe src="https://www.cupreneserum.com" loading="lazy" scrolling="no" tabindex="-1"></iframe>
+        <div class="overlay">
+          <button class="view-btn">View Site ↗</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-niche">Skincare / E-Commerce</p>
+        <h3 class="card-name">CUprene</h3>
+        <p class="card-desc">Live skincare brand with real Google login, e-commerce, and a custom domain — built and owned by me.</p>
+      </div>
+    </a>
+
+  </div>
+
+  <footer class="site-footer">
+    <p class="footer-services">Custom website design &amp; builds, domain and hosting setup, and ongoing monthly site management for local businesses.</p>
+    <p class="footer-contact"><a href="mailto:rockstardev567@gmail.com">rockstardev567@gmail.com</a></p>
+    <p class="footer-legal">© 2026 Devon Reyes Web Design · Cypress, CA</p>
+  </footer>
+
+  <script>
+    // Magic Card border spotlight — tracks mouse per card
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+        card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.setProperty('--mx', '-220px');
+        card.style.setProperty('--my', '-220px');
+      });
+    });
+  </script>
+
+</body>
+</html>

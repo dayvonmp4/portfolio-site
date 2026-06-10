@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Custom Orders — Flour & Story Bakery</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400;1,6..96,500;1,6..96,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --white: #ffffff; --off: #fafafa; --espresso: #1e0d05;
+      --brown: #4a2510; --caramel: #b06a28; --gold: #c87d35;
+      --sand: #d4a876; --text: #1e0d05; --muted: #7a6555;
+      --border: #e8ddd2; --warm: #f5ede2;
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Jost', sans-serif; background: var(--white); color: var(--text); -webkit-font-smoothing: antialiased; }
+    .js-ready .fade-up { opacity: 0; transform: translateY(24px); transition: opacity .7s var(--ease-out), transform .7s var(--ease-out); }
+    .js-ready .fade-up.visible { opacity: 1; transform: none; }
+    .js-ready .fade-up.d1 { transition-delay: 100ms; }
+    .js-ready .fade-up.d2 { transition-delay: 200ms; }
+    @media (prefers-reduced-motion: reduce) { .js-ready .fade-up { opacity: 1 !important; transform: none !important; transition: none !important; } }
+
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 64px; height: 68px; background: rgba(255,255,255,0.92); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); }
+    .logo { font-family: 'Bodoni Moda', serif; font-size: 1.35rem; font-style: italic; font-weight: 400; color: var(--brown); line-height: 1; text-decoration: none; display: block; }
+    .logo small { display: block; font-family: 'Jost', sans-serif; font-style: normal; font-size: 0.57rem; letter-spacing: 4px; text-transform: uppercase; color: var(--caramel); font-weight: 600; margin-top: 3px; }
+    .nav-links { display: flex; gap: 36px; }
+    .nav-links a { text-decoration: none; color: var(--muted); font-size: .75rem; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; transition: color .2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--brown); }
+    .nav-links a.active { font-weight: 600; }
+    .nav-cta { background: var(--brown); color: white; padding: 9px 22px; text-decoration: none; font-size: .7rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; border-radius: 2px; transition: background .2s, transform .15s; }
+    .nav-cta:hover { background: var(--espresso); transform: translateY(-1px); }
+
+    .page-header { padding: 120px 64px 64px; background: var(--warm); border-bottom: 1px solid var(--border); }
+    .page-header h1 { font-family: 'Bodoni Moda', serif; font-size: clamp(40px,5vw,58px); font-weight: 400; font-style: italic; color: var(--brown); margin-bottom: 10px; text-wrap: balance; }
+    .page-header p { font-size: .88rem; color: var(--muted); font-weight: 300; line-height: 1.65; }
+
+    /* Custom cards */
+    .custom { background: var(--espresso); padding: 80px 64px; }
+    .custom-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; margin-top: 48px; }
+    .custom-card { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); padding: 48px 36px; transition: background .25s; }
+    .custom-card:hover { background: rgba(255,255,255,.08); }
+    .custom-card h3 { font-family: 'Bodoni Moda', serif; font-size: 1.2rem; font-weight: 400; font-style: italic; color: #f5ede2; margin-bottom: 14px; }
+    .custom-card p { font-size: .84rem; color: rgba(245,237,226,.5); line-height: 1.8; font-weight: 300; margin-bottom: 24px; }
+    .custom-detail { font-size: .68rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--caramel); }
+    h2.custom-title { font-family: 'Bodoni Moda', serif; font-size: clamp(30px,3.5vw,42px); font-weight: 400; color: #f5ede2; line-height: 1.1; }
+
+    /* Process */
+    .process { background: var(--white); padding: 80px 64px; }
+    h2.process-title { font-family: 'Bodoni Moda', serif; font-size: clamp(30px,3.5vw,42px); font-weight: 400; color: var(--brown); margin-bottom: 48px; line-height: 1.1; }
+    .process-steps { display: grid; grid-template-columns: repeat(4,1fr); gap: 2px; }
+    .step { padding: 36px 28px; background: var(--off); border: 1px solid var(--border); }
+    .step-num { font-family: 'Bodoni Moda', serif; font-size: 2rem; font-style: italic; color: var(--caramel); margin-bottom: 14px; line-height: 1; }
+    .step h3 { font-size: .9rem; font-weight: 600; color: var(--brown); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+    .step p { font-size: .82rem; color: var(--muted); line-height: 1.7; font-weight: 300; }
+
+    .cta { background: var(--warm); border-top: 1px solid var(--border); padding: 80px 64px; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 48px; }
+    .cta h2 { font-family: 'Bodoni Moda', serif; font-size: clamp(32px,4vw,52px); font-weight: 400; font-style: italic; color: var(--brown); line-height: 1.1; }
+    .cta p { font-size: .88rem; color: var(--muted); margin-top: 10px; font-weight: 300; }
+    .cta-action a { display: inline-block; background: var(--brown); color: white; padding: 16px 40px; text-decoration: none; font-size: .73rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; border-radius: 2px; white-space: nowrap; transition: background .2s, transform .15s; }
+    .cta-action a:hover { background: var(--espresso); transform: translateY(-2px); }
+
+    footer { background: var(--espresso); padding: 32px 64px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-top: 1px solid rgba(255,255,255,.06); }
+    .footer-logo { font-family: 'Bodoni Moda', serif; font-style: italic; font-size: 1.2rem; color: #d4c0a8; font-weight: 400; }
+    footer p { font-size: .72rem; color: rgba(255,255,255,.25); }
+
+    @media (max-width: 960px) {
+      nav { padding: 0 24px; } .nav-links { display: none; }
+      .page-header { padding: 100px 24px 48px; }
+      .custom { padding: 60px 24px; }
+      .custom-grid, .process-steps { grid-template-columns: 1fr; }
+      .process { padding: 60px 24px; }
+      .cta { padding: 60px 24px; grid-template-columns: 1fr; }
+      .cta-action a { width: 100%; text-align: center; display: block; }
+      footer { padding: 28px 24px; flex-direction: column; text-align: center; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="bakery.html" class="logo">Flour &amp; Story<small>Artisan Bakery</small></a>
+  <div class="nav-links">
+    <a href="bakery-menu.html">Menu</a>
+    <a href="bakery-custom.html" class="active">Custom Orders</a>
+    <a href="bakery-story.html">Our Story</a>
+    <a href="mailto:hello@flourandstory.com">Visit Us</a>
+  </div>
+  <a href="bakery-menu.html" class="nav-cta">Order Online</a>
+</nav>
+
+<div class="page-header">
+  <h1 class="fade-up">Custom Orders</h1>
+  <p class="fade-up d1">Made to order for weddings, events, and every occasion worth celebrating.</p>
+</div>
+
+<section class="custom">
+  <h2 class="custom-title fade-up">What We Make</h2>
+  <div class="custom-grid">
+    <div class="custom-card fade-up">
+      <h3>Wedding Cakes</h3>
+      <p>Custom-designed tiered cakes for your special day. We work with you on flavors, design, and dietary needs.</p>
+      <div class="custom-detail">Order 4 weeks in advance</div>
+    </div>
+    <div class="custom-card fade-up d1">
+      <h3>Corporate Catering</h3>
+      <p>Pastry boxes, assorted breads, and custom treats for your office or event. Minimum order quantities apply.</p>
+      <div class="custom-detail">48-hour notice required</div>
+    </div>
+    <div class="custom-card fade-up d2">
+      <h3>Birthdays & Celebrations</h3>
+      <p>Make any occasion memorable with a custom cake or dessert spread. Choose your flavors, design, and dietary requirements.</p>
+      <div class="custom-detail">1–2 weeks lead time</div>
+    </div>
+  </div>
+</section>
+
+<section class="process">
+  <h2 class="process-title fade-up">How It Works</h2>
+  <div class="process-steps">
+    <div class="step fade-up">
+      <div class="step-num">1</div>
+      <h3>Get in Touch</h3>
+      <p>Email us with your event date, size, and any flavor ideas. We'll respond within 24 hours.</p>
+    </div>
+    <div class="step fade-up d1">
+      <div class="step-num">2</div>
+      <h3>Tasting</h3>
+      <p>We'll set up a tasting appointment so you can try the flavors before committing.</p>
+    </div>
+    <div class="step fade-up d2">
+      <div class="step-num">3</div>
+      <h3>Design & Confirm</h3>
+      <p>We finalize the design together and lock in your order with a 50% deposit.</p>
+    </div>
+    <div class="step fade-up d2">
+      <div class="step-num">4</div>
+      <h3>Pickup or Delivery</h3>
+      <p>We'll have your order ready on time. Local delivery available for orders over $150.</p>
+    </div>
+  </div>
+</section>
+
+<div class="cta">
+  <div class="fade-up">
+    <h2>Ready to Order?</h2>
+    <p>Reach out and we'll get started. We take a limited number of custom orders each month.</p>
+  </div>
+  <div class="cta-action fade-up d1"><a href="mailto:hello@flourandstory.com">Start Your Order</a></div>
+</div>
+
+<footer>
+  <div class="footer-logo">Flour &amp; Story</div>
+  <p>842 Maple Street, Portland, OR &nbsp;·&nbsp; (503) 555-0142 &nbsp;·&nbsp; hello@flourandstory.com</p>
+  <p>© 2026 Flour &amp; Story Bakery</p>
+</footer>
+
+<script>
+  document.body.classList.add('js-ready');
+  const obs = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } }), { threshold: 0.1 });
+  document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>

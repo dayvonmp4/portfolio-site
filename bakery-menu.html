@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Menu — Flour & Story Bakery</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400;1,6..96,500;1,6..96,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --white: #ffffff; --off: #fafafa; --espresso: #1e0d05;
+      --brown: #4a2510; --caramel: #b06a28; --gold: #c87d35;
+      --sand: #d4a876; --text: #1e0d05; --muted: #7a6555;
+      --border: #e8ddd2; --warm: #f5ede2;
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Jost', sans-serif; background: var(--white); color: var(--text); -webkit-font-smoothing: antialiased; }
+    .js-ready .fade-up { opacity: 0; transform: translateY(24px); transition: opacity .7s var(--ease-out), transform .7s var(--ease-out); }
+    .js-ready .fade-up.visible { opacity: 1; transform: none; }
+    .js-ready .fade-up.d1 { transition-delay: 100ms; }
+    .js-ready .fade-up.d2 { transition-delay: 200ms; }
+    .js-ready .fade-up.d3 { transition-delay: 300ms; }
+    @media (prefers-reduced-motion: reduce) { .js-ready .fade-up { opacity: 1 !important; transform: none !important; transition: none !important; } }
+
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 64px; height: 68px; background: rgba(255,255,255,0.92); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); }
+    .logo { font-family: 'Bodoni Moda', serif; font-size: 1.35rem; font-style: italic; font-weight: 400; color: var(--brown); line-height: 1; text-decoration: none; display: block; }
+    .logo small { display: block; font-family: 'Jost', sans-serif; font-style: normal; font-size: 0.57rem; letter-spacing: 4px; text-transform: uppercase; color: var(--caramel); font-weight: 600; margin-top: 3px; }
+    .nav-links { display: flex; gap: 36px; }
+    .nav-links a { text-decoration: none; color: var(--muted); font-size: .75rem; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; transition: color .2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--brown); }
+    .nav-links a.active { font-weight: 600; }
+    .nav-cta { background: var(--brown); color: white; padding: 9px 22px; text-decoration: none; font-size: .7rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; border-radius: 2px; transition: background .2s, transform .15s; }
+    .nav-cta:hover { background: var(--espresso); transform: translateY(-1px); }
+
+    /* Page header */
+    .page-header { padding: 120px 64px 64px; background: var(--warm); border-bottom: 1px solid var(--border); }
+    .page-header h1 { font-family: 'Bodoni Moda', serif; font-size: clamp(40px,5vw,58px); font-weight: 400; font-style: italic; color: var(--brown); margin-bottom: 10px; text-wrap: balance; }
+    .page-header p { font-size: .88rem; color: var(--muted); font-weight: 300; line-height: 1.65; }
+
+    section { padding: 80px 64px; }
+    h2.section-title { font-family: 'Bodoni Moda', serif; font-size: clamp(28px,3.5vw,40px); font-weight: 400; color: var(--brown); margin-bottom: 40px; line-height: 1.12; }
+
+    .menu-category { margin-bottom: 72px; }
+    .menu-category:last-child { margin-bottom: 0; }
+    .category-rule { width: 40px; height: 1px; background: var(--caramel); margin-bottom: 12px; }
+
+    .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px 24px; }
+    .menu-card { cursor: default; }
+    .menu-img { width: 100%; aspect-ratio: 4/3; border-radius: 3px; overflow: hidden; margin-bottom: 18px; }
+    .menu-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s var(--ease-out); }
+    .menu-card:hover .menu-img img { transform: scale(1.04); }
+    .menu-img-gradient { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+    .gi-tart  { background: linear-gradient(155deg,#f0c8a0,#d4996a,#b87040); }
+    .gi-babka { background: linear-gradient(155deg,#2a1608,#4a2510,#3a1c0c); }
+    .gi-cake  { background: linear-gradient(155deg,#f8eed8,#e8d4a8,#d4b880); }
+    .gi-label { font-family: 'Bodoni Moda', serif; font-style: italic; font-size: 1.1rem; color: rgba(255,255,255,.45); }
+    .gi-cake .gi-label { color: rgba(90,60,30,.28); }
+    .menu-card h3 { font-family: 'Bodoni Moda', serif; font-size: 1.1rem; font-weight: 400; color: var(--brown); margin-bottom: 8px; }
+    .menu-card p { font-size: .83rem; color: var(--muted); line-height: 1.7; margin-bottom: 12px; font-weight: 300; }
+    .menu-price { font-size: .86rem; font-weight: 600; color: var(--caramel); }
+
+    .cta { background: var(--warm); border-top: 1px solid var(--border); padding: 80px 64px; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 48px; }
+    .cta h2 { font-family: 'Bodoni Moda', serif; font-size: clamp(32px,4vw,52px); font-weight: 400; font-style: italic; color: var(--brown); line-height: 1.1; }
+    .cta p { font-size: .88rem; color: var(--muted); margin-top: 10px; font-weight: 300; line-height: 1.65; }
+    .cta-action a { display: inline-block; background: var(--brown); color: white; padding: 16px 40px; text-decoration: none; font-size: .73rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; border-radius: 2px; white-space: nowrap; transition: background .2s, transform .15s; }
+    .cta-action a:hover { background: var(--espresso); transform: translateY(-2px); }
+
+    footer { background: var(--espresso); padding: 32px 64px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-top: 1px solid rgba(255,255,255,.06); }
+    .footer-logo { font-family: 'Bodoni Moda', serif; font-style: italic; font-size: 1.2rem; color: #d4c0a8; font-weight: 400; }
+    footer p { font-size: .72rem; color: rgba(255,255,255,.25); }
+
+    @media (max-width: 960px) {
+      nav { padding: 0 24px; } .nav-links { display: none; }
+      .page-header { padding: 100px 24px 48px; } section { padding: 60px 24px; }
+      .menu-grid { grid-template-columns: 1fr; }
+      .cta { padding: 60px 24px; grid-template-columns: 1fr; }
+      .cta-action a { width: 100%; text-align: center; display: block; }
+      footer { padding: 28px 24px; flex-direction: column; text-align: center; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="bakery.html" class="logo">Flour &amp; Story<small>Artisan Bakery</small></a>
+  <div class="nav-links">
+    <a href="bakery-menu.html" class="active">Menu</a>
+    <a href="bakery-custom.html">Custom Orders</a>
+    <a href="bakery-story.html">Our Story</a>
+    <a href="mailto:hello@flourandstory.com">Visit Us</a>
+  </div>
+  <a href="bakery-menu.html" class="nav-cta">Order Online</a>
+</nav>
+
+<div class="page-header">
+  <h1 class="fade-up">Today's Menu</h1>
+  <p class="fade-up d1">Baked fresh every morning before sunrise. Everything made by hand, from scratch.</p>
+</div>
+
+<section>
+  <div class="menu-category">
+    <div class="category-rule fade-up"></div>
+    <h2 class="section-title fade-up">Breads & Loaves</h2>
+    <div class="menu-grid">
+      <div class="menu-card fade-up">
+        <div class="menu-img"><img src="https://images.unsplash.com/photo-1590301157172-7ba48dd1c2b2?auto=format&fit=crop&w=800&q=80" alt="Sourdough Country Loaf" loading="lazy"/></div>
+        <h3>Sourdough Country Loaf</h3>
+        <p>Our signature slow-fermented sourdough with a crispy crust and open crumb. Baked in a cast iron dutch oven.</p>
+        <div class="menu-price">$9.00</div>
+      </div>
+      <div class="menu-card fade-up d1">
+        <div class="menu-img"><img src="https://images.unsplash.com/photo-1549413468-cd78edb7e75c?auto=format&fit=crop&w=800&q=80" alt="Cinnamon Morning Bun" loading="lazy"/></div>
+        <h3>Honey Wheat Loaf</h3>
+        <p>Soft sandwich loaf made with local whole wheat flour and a touch of wildflower honey. Great toasted.</p>
+        <div class="menu-price">$8.00</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-category">
+    <div class="category-rule fade-up"></div>
+    <h2 class="section-title fade-up">Pastries</h2>
+    <div class="menu-grid">
+      <div class="menu-card fade-up">
+        <div class="menu-img"><img src="https://images.unsplash.com/photo-1623334044303-241021148842?auto=format&fit=crop&w=800&q=80" alt="Brown Butter Croissant" loading="lazy"/></div>
+        <h3>Brown Butter Croissant</h3>
+        <p>Laminated with French butter and brown butter filling. Flaky, buttery, and impossible to stop at one.</p>
+        <div class="menu-price">$4.50</div>
+      </div>
+      <div class="menu-card fade-up d1">
+        <div class="menu-img"><img src="https://images.unsplash.com/photo-1549413468-cd78edb7e75c?auto=format&fit=crop&w=800&q=80" alt="Cinnamon Morning Bun" loading="lazy"/></div>
+        <h3>Cinnamon Morning Bun</h3>
+        <p>Rolled with house-made cinnamon sugar and orange zest, finished with a light glaze.</p>
+        <div class="menu-price">$4.00</div>
+      </div>
+      <div class="menu-card fade-up d2">
+        <div class="menu-img">
+          <div class="menu-img-gradient gi-tart"><span class="gi-label">Seasonal Tart</span></div>
+        </div>
+        <h3>Seasonal Fruit Tart</h3>
+        <p>Buttery shortcrust filled with vanilla pastry cream and topped with fresh seasonal fruit from local farms.</p>
+        <div class="menu-price">$6.00</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-category">
+    <div class="category-rule fade-up"></div>
+    <h2 class="section-title fade-up">Sweets</h2>
+    <div class="menu-grid">
+      <div class="menu-card fade-up">
+        <div class="menu-img">
+          <div class="menu-img-gradient gi-babka"><span class="gi-label" style="color:rgba(255,255,255,.2)">Dark Chocolate</span></div>
+        </div>
+        <h3>Dark Chocolate Babka</h3>
+        <p>Brioche dough swirled with rich dark chocolate and toasted hazelnuts. Baked to order on weekends.</p>
+        <div class="menu-price">$14.00</div>
+      </div>
+      <div class="menu-card fade-up d1">
+        <div class="menu-img">
+          <div class="menu-img-gradient gi-cake"><span class="gi-label">Cheesecake</span></div>
+        </div>
+        <h3>Classic Cheesecake Slice</h3>
+        <p>New York-style cheesecake on a graham cracker crust. Dense, creamy, and not too sweet.</p>
+        <div class="menu-price">$7.00</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="cta">
+  <div class="fade-up">
+    <h2>Want Something Custom?</h2>
+    <p>We take special orders for events, celebrations, and corporate catering.</p>
+  </div>
+  <div class="cta-action fade-up d1"><a href="bakery-custom.html">See Custom Orders</a></div>
+</div>
+
+<footer>
+  <div class="footer-logo">Flour &amp; Story</div>
+  <p>842 Maple Street, Portland, OR &nbsp;·&nbsp; (503) 555-0142 &nbsp;·&nbsp; hello@flourandstory.com</p>
+  <p>© 2026 Flour &amp; Story Bakery</p>
+</footer>
+
+<script>
+  document.body.classList.add('js-ready');
+  const obs = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } }), { threshold: 0.1 });
+  document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>

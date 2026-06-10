@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>APEX Performance Training</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;0,900;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --black:   #080808;
+      --dark:    #101010;
+      --card:    #141414;
+      --surface: #1a1a1a;
+      --border:  #222222;
+      --faint:   #2c2c2c;
+      --red:     #e02820;
+      --red-hi:  #f03830;
+      --white:   #f2f2f2;
+      --mid:     #999999;
+      --muted:   #555555;
+
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Manrope', sans-serif;
+      background: var(--black);
+      color: var(--white);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* ── Reveal animations ────────────────── */
+    .js-ready .fade-up {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+    }
+    .js-ready .fade-up.visible { opacity: 1; transform: translateY(0); }
+    .js-ready .fade-up.d1 { transition-delay: 100ms; }
+    .js-ready .fade-up.d2 { transition-delay: 200ms; }
+    .js-ready .fade-up.d3 { transition-delay: 300ms; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .js-ready .fade-up {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+    }
+
+    /* ── Nav ──────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 60px; height: 64px;
+      background: rgba(8,8,8,0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      transition: border-color 0.3s;
+    }
+
+    .logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.45rem; font-weight: 900;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: var(--white);
+    }
+    .logo em { color: var(--red); font-style: normal; }
+
+    .nav-links { display: flex; gap: 32px; }
+    .nav-links a {
+      text-decoration: none; color: var(--mid);
+      font-size: 0.76rem; font-weight: 600;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--white); }
+
+    .nav-cta {
+      background: var(--red); color: white;
+      padding: 9px 22px; text-decoration: none;
+      font-size: 0.73rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      border-radius: 3px;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .nav-cta:hover { background: var(--red-hi); transform: translateY(-1px); }
+
+    /* ── Hero ─────────────────────────────── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding: 100px 60px 80px;
+      overflow: hidden;
+    }
+
+    .hero-photo {
+      position: absolute; inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1648542036561-e1d66a5ae2b1?auto=format&fit=crop&w=1800&q=80');
+      background-size: cover;
+      background-position: center 30%;
+    }
+    .hero-photo::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(100deg,
+        rgba(8,8,8,0.96) 0%,
+        rgba(8,8,8,0.80) 45%,
+        rgba(8,8,8,0.35) 100%
+      );
+    }
+
+    .hero-content {
+      position: relative; z-index: 2;
+      max-width: 600px;
+    }
+
+    .hero-flag {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: var(--red); margin-bottom: 28px;
+    }
+    .hero-flag::before {
+      content: '';
+      display: block; width: 28px; height: 1.5px; background: var(--red);
+      flex-shrink: 0;
+    }
+
+    .hero h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(52px, 7.5vw, 88px);
+      font-weight: 900; font-style: italic;
+      text-transform: uppercase;
+      line-height: 0.94;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin-bottom: 28px;
+      text-wrap: balance;
+    }
+    .hero h1 em { color: var(--red); font-style: inherit; }
+
+    .hero p {
+      color: var(--mid); font-size: 1rem;
+      line-height: 1.85; max-width: 440px;
+      margin-bottom: 44px; font-weight: 300;
+      text-wrap: pretty;
+    }
+
+    .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+
+    .btn-red {
+      background: var(--red); color: white;
+      padding: 15px 38px; text-decoration: none;
+      font-size: 0.78rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      border-radius: 3px;
+      transition: background 0.2s, transform 0.15s;
+      display: inline-block;
+    }
+    .btn-red:hover { background: var(--red-hi); transform: translateY(-2px); }
+
+    .btn-ghost {
+      border: 1px solid rgba(255,255,255,0.25);
+      color: var(--white); padding: 15px 38px;
+      text-decoration: none;
+      font-size: 0.78rem; font-weight: 500;
+      letter-spacing: 2px; text-transform: uppercase;
+      border-radius: 3px;
+      transition: border-color 0.2s, background 0.2s;
+      display: inline-block;
+    }
+    .btn-ghost:hover {
+      border-color: rgba(255,255,255,0.6);
+      background: rgba(255,255,255,0.06);
+    }
+
+    /* ── Fact strip ───────────────────────── */
+    .factstrip {
+      background: var(--red);
+      display: flex;
+      justify-content: center; align-items: center;
+      gap: 0; flex-wrap: wrap;
+      overflow: hidden;
+    }
+    .factstrip-item {
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: white; padding: 15px 28px;
+      border-right: 1px solid rgba(255,255,255,0.2);
+      white-space: nowrap;
+    }
+    .factstrip-item:last-child { border-right: none; }
+    .factstrip-item strong {
+      font-weight: 800;
+      margin-right: 6px;
+    }
+
+    /* ── Section base ─────────────────────── */
+    section { padding: 96px 60px; }
+
+    h2.section-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(38px, 5vw, 52px);
+      font-weight: 900; font-style: italic;
+      text-transform: uppercase; line-height: 1;
+      letter-spacing: -0.02em;
+      margin-bottom: 56px;
+    }
+
+    /* ── Programs ─────────────────────────── */
+    .programs { background: var(--dark); }
+    .programs-intro {
+      max-width: 520px; margin-bottom: 52px;
+    }
+    .programs-intro p {
+      font-size: 0.95rem; color: var(--mid);
+      line-height: 1.8; font-weight: 300;
+    }
+
+    .programs-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .program-card {
+      background: var(--card);
+      padding: 44px 36px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.25s;
+      cursor: default;
+    }
+    .program-card:hover { background: #1a1a1a; }
+
+    .program-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 2px; background: var(--red);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.35s var(--ease-out);
+    }
+    .program-card:hover::before { transform: scaleX(1); }
+
+    .program-icon {
+      width: 40px; height: 40px;
+      border: 1px solid var(--faint);
+      border-radius: 3px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 28px;
+      font-size: 1.1rem;
+      transition: border-color 0.2s;
+    }
+    .program-card:hover .program-icon { border-color: var(--red); }
+
+    .program-card h3 {
+      font-size: 1rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1px;
+      color: var(--white); margin-bottom: 14px;
+      line-height: 1.3;
+    }
+    .program-card p {
+      font-size: 0.87rem; color: var(--mid);
+      line-height: 1.75; font-weight: 300; margin-bottom: 24px;
+    }
+    .program-badge {
+      font-size: 0.66rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--red);
+    }
+
+    /* ── Trainers ─────────────────────────── */
+    .trainers { background: var(--black); }
+
+    .trainers-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .trainer-card {
+      position: relative;
+    }
+
+    .trainer-photo {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      overflow: hidden;
+      position: relative;
+      border-radius: 3px;
+    }
+    .trainer-photo img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: top center;
+      display: block;
+      transition: transform 0.6s var(--ease-out);
+    }
+    .trainer-card:hover .trainer-photo img {
+      transform: scale(1.04);
+    }
+
+    .trainer-photo-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top,
+        rgba(8,8,8,0.85) 0%,
+        rgba(8,8,8,0.1) 55%,
+        transparent 100%
+      );
+    }
+
+    .trainer-info {
+      padding: 20px 0 0;
+    }
+    .trainer-info h3 {
+      font-size: 1rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1px;
+      color: var(--white); margin-bottom: 4px;
+    }
+    .trainer-role {
+      font-size: 0.7rem; color: var(--red);
+      font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; margin-bottom: 10px;
+      display: block;
+    }
+    .trainer-info p {
+      font-size: 0.85rem; color: var(--mid);
+      line-height: 1.65; font-weight: 300;
+    }
+
+    /* ── Pricing ──────────────────────────── */
+    .pricing { background: var(--dark); }
+    .pricing-header {
+      display: flex; align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 48px; flex-wrap: wrap; gap: 16px;
+    }
+    .pricing-header .section-title { margin-bottom: 0; }
+    .pricing-note {
+      font-size: 0.82rem; color: var(--mid);
+      font-weight: 300; max-width: 280px;
+      line-height: 1.65; text-align: right;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .pricing-card {
+      border: 1px solid var(--border);
+      padding: 40px 32px;
+      border-radius: 4px;
+      position: relative;
+      transition: border-color 0.25s;
+    }
+    .pricing-card:hover { border-color: var(--faint); }
+    .pricing-card.featured {
+      background: var(--red);
+      border-color: var(--red);
+    }
+    .pricing-card.featured::before {
+      content: 'Most Popular';
+      position: absolute; top: -13px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--white); color: var(--red);
+      font-size: 0.62rem; font-weight: 800;
+      letter-spacing: 2.5px; text-transform: uppercase;
+      padding: 4px 14px; border-radius: 100px;
+      white-space: nowrap;
+    }
+
+    .plan-name {
+      font-size: 0.66rem; font-weight: 700;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: var(--mid); margin-bottom: 20px;
+    }
+    .pricing-card.featured .plan-name { color: rgba(255,255,255,0.65); }
+
+    .price {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 3.4rem; font-weight: 900;
+      color: var(--white); line-height: 1;
+      margin-bottom: 4px;
+    }
+    .price-sub {
+      font-size: 0.78rem; color: var(--mid);
+      margin-bottom: 28px;
+    }
+    .pricing-card.featured .price-sub { color: rgba(255,255,255,0.65); }
+
+    .feature-list {
+      list-style: none; margin-bottom: 32px;
+    }
+    .feature-list li {
+      font-size: 0.86rem; color: var(--mid);
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 400;
+    }
+    .pricing-card.featured .feature-list li {
+      color: rgba(255,255,255,0.88);
+      border-bottom-color: rgba(255,255,255,0.15);
+    }
+    .feature-list li::before {
+      content: '';
+      width: 5px; height: 5px;
+      border-radius: 50%; background: var(--red); flex-shrink: 0;
+    }
+    .pricing-card.featured .feature-list li::before { background: white; }
+
+    .plan-btn {
+      display: block; text-align: center;
+      padding: 13px;
+      border: 1px solid var(--border);
+      color: var(--white); text-decoration: none;
+      font-size: 0.73rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      border-radius: 3px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .plan-btn:hover { background: var(--faint); border-color: var(--faint); }
+    .pricing-card.featured .plan-btn {
+      background: white; color: var(--red); border-color: white;
+    }
+    .pricing-card.featured .plan-btn:hover {
+      background: #f0f0f0;
+    }
+
+    /* ── CTA ──────────────────────────────── */
+    .cta {
+      background: var(--black);
+      padding: 96px 60px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 48px;
+      border-top: 1px solid var(--border);
+    }
+
+    .cta h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(40px, 6vw, 68px);
+      font-weight: 900; font-style: italic;
+      text-transform: uppercase; line-height: 1;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      text-wrap: balance;
+    }
+    .cta h2 em { color: var(--red); font-style: inherit; }
+    .cta p {
+      font-size: 0.9rem; color: var(--mid);
+      margin-top: 12px; font-weight: 300;
+      line-height: 1.7;
+    }
+    .cta-action { flex-shrink: 0; }
+    .cta-action a {
+      display: inline-block;
+      background: var(--red); color: white;
+      padding: 18px 48px; text-decoration: none;
+      font-size: 0.78rem; font-weight: 700;
+      letter-spacing: 2.5px; text-transform: uppercase;
+      border-radius: 3px;
+      transition: background 0.2s, transform 0.15s;
+      white-space: nowrap;
+    }
+    .cta-action a:hover { background: var(--red-hi); transform: translateY(-2px); }
+
+    /* ── Footer ───────────────────────────── */
+    footer {
+      background: #030303;
+      border-top: 1px solid var(--border);
+      padding: 32px 60px;
+      display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 12px;
+    }
+    .footer-logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.2rem; font-weight: 900;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: var(--white);
+    }
+    .footer-logo em { color: var(--red); font-style: normal; }
+    footer p { font-size: 0.74rem; color: var(--muted); }
+
+    /* ── Responsive ───────────────────────── */
+    @media (max-width: 960px) {
+      nav { padding: 0 24px; }
+      .nav-links { display: none; }
+      .hero { padding: 90px 24px 60px; }
+      section { padding: 72px 24px; }
+      .cta { padding: 72px 24px; grid-template-columns: 1fr; }
+      .cta-action { width: 100%; }
+      .cta-action a { width: 100%; text-align: center; display: block; }
+      .programs-grid, .trainers-grid, .pricing-grid { grid-template-columns: 1fr; gap: 2px; }
+      .factstrip { flex-direction: column; gap: 0; }
+      .factstrip-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.2); width: 100%; text-align: center; }
+      .factstrip-item:last-child { border-bottom: none; }
+      footer { padding: 28px 24px; flex-direction: column; text-align: center; gap: 8px; }
+      .pricing-header { flex-direction: column; align-items: flex-start; }
+      .pricing-note { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">AP<em>EX</em></div>
+  <div class="nav-links">
+    <a href="#programs">Programs</a>
+    <a href="#trainers">Trainers</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <a href="#contact" class="nav-cta">Join Now</a>
+</nav>
+
+<!-- ── Hero ──────────────────────────────── -->
+<section class="hero" id="home">
+  <div class="hero-photo"></div>
+  <div class="hero-content">
+    <div class="hero-flag fade-up">Elite Personal Training · Miami</div>
+    <h1 class="fade-up d1">Train Like<br>You <em>Mean It</em></h1>
+    <p class="fade-up d2">Stop settling for average results. APEX delivers elite coaching, science-backed programming, and a community that pushes you beyond what you thought possible.</p>
+    <div class="hero-btns fade-up d3">
+      <a href="#contact" class="btn-red">Start Today</a>
+      <a href="#programs" class="btn-ghost">View Programs</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Fact strip ─────────────────────────── -->
+<div class="factstrip">
+  <div class="factstrip-item"><strong>500+</strong> Members Trained</div>
+  <div class="factstrip-item"><strong>8</strong> Expert Coaches</div>
+  <div class="factstrip-item"><strong>97%</strong> Client Retention</div>
+  <div class="factstrip-item"><strong>6</strong> Years Operating</div>
+</div>
+
+<!-- ── Programs ──────────────────────────── -->
+<section class="programs" id="programs">
+  <div class="programs-intro fade-up">
+    <h2 class="section-title">Our Programs</h2>
+    <p>Three ways to train with us. Every program includes coach-designed programming, progress tracking, and access to our full facility.</p>
+  </div>
+  <div class="programs-grid">
+    <div class="program-card fade-up">
+      <div class="program-icon">🎯</div>
+      <h3>1-on-1 Coaching</h3>
+      <p>Fully personalized training sessions built around your goals, schedule, and fitness level. The fastest path to real results.</p>
+      <div class="program-badge">Most Popular</div>
+    </div>
+    <div class="program-card fade-up d1">
+      <div class="program-icon">👥</div>
+      <h3>Small Group Training</h3>
+      <p>The energy of a group with the attention of personal training. Groups of 4 to 6 for maximum accountability and results.</p>
+      <div class="program-badge">Best Value</div>
+    </div>
+    <div class="program-card fade-up d2">
+      <div class="program-icon">📱</div>
+      <h3>Online Coaching</h3>
+      <p>Train on your schedule from anywhere. Custom programming, nutrition guidance, and weekly check-ins with your coach.</p>
+      <div class="program-badge">Flexible</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Trainers ───────────────────────────── -->
+<section class="trainers" id="trainers">
+  <h2 class="section-title fade-up">Meet Your Coaches</h2>
+  <div class="trainers-grid">
+
+    <div class="trainer-card fade-up">
+      <div class="trainer-photo">
+        <img
+          src="https://images.unsplash.com/photo-1704223523169-52feeed90365?auto=format&fit=crop&w=600&q=80"
+          alt="Marcus Reid, Head Coach"
+          loading="lazy"
+        />
+        <div class="trainer-photo-overlay"></div>
+      </div>
+      <div class="trainer-info">
+        <h3>Marcus Reid</h3>
+        <span class="trainer-role">Head Coach & Founder</span>
+        <p>NSCA-CPT certified with 10+ years coaching athletes from beginners to competitive bodybuilders.</p>
+      </div>
+    </div>
+
+    <div class="trainer-card fade-up d1">
+      <div class="trainer-photo">
+        <img
+          src="https://images.unsplash.com/photo-1548690312-e3b507d8c110?auto=format&fit=crop&w=600&q=80"
+          alt="Jasmine Torres, Strength & Conditioning"
+          loading="lazy"
+        />
+        <div class="trainer-photo-overlay"></div>
+      </div>
+      <div class="trainer-info">
+        <h3>Jasmine Torres</h3>
+        <span class="trainer-role">Strength & Conditioning</span>
+        <p>Former D1 athlete specializing in functional strength, mobility, and injury prevention programming.</p>
+      </div>
+    </div>
+
+    <div class="trainer-card fade-up d2">
+      <div class="trainer-photo">
+        <img
+          src="https://images.unsplash.com/photo-1738523686619-1b3b5d2405ee?auto=format&fit=crop&w=600&q=80"
+          alt="Darius Cole, Nutrition & Performance"
+          loading="lazy"
+        />
+        <div class="trainer-photo-overlay"></div>
+      </div>
+      <div class="trainer-info">
+        <h3>Darius Cole</h3>
+        <span class="trainer-role">Nutrition & Performance</span>
+        <p>Certified nutrition coach helping clients fuel their training and build sustainable healthy habits.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── Pricing ────────────────────────────── -->
+<section class="pricing" id="pricing">
+  <div class="pricing-header fade-up">
+    <h2 class="section-title">Simple Pricing</h2>
+    <p class="pricing-note">No enrollment fees. Cancel anytime. First session is free.</p>
+  </div>
+  <div class="pricing-grid">
+
+    <div class="pricing-card fade-up">
+      <div class="plan-name">Starter</div>
+      <div class="price">$149</div>
+      <div class="price-sub">per month</div>
+      <ul class="feature-list">
+        <li>4 Group Sessions / Month</li>
+        <li>Basic Programming</li>
+        <li>Community Access</li>
+        <li>Progress Tracking</li>
+      </ul>
+      <a href="#contact" class="plan-btn">Get Started</a>
+    </div>
+
+    <div class="pricing-card featured fade-up d1">
+      <div class="plan-name">Elite</div>
+      <div class="price">$299</div>
+      <div class="price-sub">per month</div>
+      <ul class="feature-list">
+        <li>8 Sessions / Month</li>
+        <li>Custom Programming</li>
+        <li>Nutrition Guidance</li>
+        <li>Weekly Check-ins</li>
+        <li>Priority Scheduling</li>
+      </ul>
+      <a href="#contact" class="plan-btn">Get Started</a>
+    </div>
+
+    <div class="pricing-card fade-up d2">
+      <div class="plan-name">1-on-1</div>
+      <div class="price">$499</div>
+      <div class="price-sub">per month</div>
+      <ul class="feature-list">
+        <li>12 Private Sessions</li>
+        <li>Full Custom Program</li>
+        <li>Meal Planning</li>
+        <li>Daily Check-ins</li>
+        <li>Body Composition Analysis</li>
+      </ul>
+      <a href="#contact" class="plan-btn">Get Started</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── CTA ────────────────────────────────── -->
+<div class="cta" id="contact">
+  <div class="fade-up">
+    <h2>Your Best Shape <em>Starts Now</em></h2>
+    <p>Book a free intro session and we'll build your plan together.</p>
+  </div>
+  <div class="cta-action fade-up d1">
+    <a href="mailto:train@apexperformance.com">Book Free Intro</a>
+  </div>
+</div>
+
+<!-- ── Footer ─────────────────────────────── -->
+<footer>
+  <div class="footer-logo">AP<em>EX</em></div>
+  <p>2240 Fitness Blvd, Miami, FL &nbsp;·&nbsp; (305) 555-0177 &nbsp;·&nbsp; train@apexperformance.com</p>
+  <p>© 2026 APEX Performance Training</p>
+</footer>
+
+<script>
+  // Prevent content flash by adding js-ready before parsing animations
+  document.body.classList.add('js-ready');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

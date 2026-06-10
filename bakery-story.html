@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Our Story — Flour & Story Bakery</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400;1,6..96,500;1,6..96,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --white: #ffffff; --off: #fafafa; --espresso: #1e0d05;
+      --brown: #4a2510; --caramel: #b06a28; --gold: #c87d35;
+      --sand: #d4a876; --text: #1e0d05; --muted: #7a6555;
+      --border: #e8ddd2; --warm: #f5ede2;
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Jost', sans-serif; background: var(--white); color: var(--text); -webkit-font-smoothing: antialiased; }
+    .js-ready .fade-up { opacity: 0; transform: translateY(24px); transition: opacity .7s var(--ease-out), transform .7s var(--ease-out); }
+    .js-ready .fade-up.visible { opacity: 1; transform: none; }
+    .js-ready .fade-up.d1 { transition-delay: 100ms; }
+    .js-ready .fade-up.d2 { transition-delay: 200ms; }
+    @media (prefers-reduced-motion: reduce) { .js-ready .fade-up { opacity: 1 !important; transform: none !important; transition: none !important; } }
+
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 64px; height: 68px; background: rgba(255,255,255,0.92); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); }
+    .logo { font-family: 'Bodoni Moda', serif; font-size: 1.35rem; font-style: italic; font-weight: 400; color: var(--brown); line-height: 1; text-decoration: none; display: block; }
+    .logo small { display: block; font-family: 'Jost', sans-serif; font-style: normal; font-size: 0.57rem; letter-spacing: 4px; text-transform: uppercase; color: var(--caramel); font-weight: 600; margin-top: 3px; }
+    .nav-links { display: flex; gap: 36px; }
+    .nav-links a { text-decoration: none; color: var(--muted); font-size: .75rem; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; transition: color .2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--brown); }
+    .nav-links a.active { font-weight: 600; }
+    .nav-cta { background: var(--brown); color: white; padding: 9px 22px; text-decoration: none; font-size: .7rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; border-radius: 2px; transition: background .2s, transform .15s; }
+    .nav-cta:hover { background: var(--espresso); transform: translateY(-1px); }
+
+    .page-header { padding: 120px 64px 64px; background: var(--warm); border-bottom: 1px solid var(--border); }
+    .page-header h1 { font-family: 'Bodoni Moda', serif; font-size: clamp(40px,5vw,58px); font-weight: 400; font-style: italic; color: var(--brown); margin-bottom: 10px; text-wrap: balance; }
+    .page-header p { font-size: .88rem; color: var(--muted); font-weight: 300; line-height: 1.65; }
+
+    /* Story section */
+    .story { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; padding: 96px 64px; background: var(--white); }
+    .story-visual { position: relative; aspect-ratio: 4/5; border-radius: 3px; overflow: hidden; }
+    .story-visual img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .story-frame { position: absolute; top: -12px; left: -12px; right: 12px; bottom: 12px; border: 1px solid var(--border); border-radius: 3px; pointer-events: none; z-index: -1; }
+    .story-text p { font-size: .9rem; color: var(--muted); line-height: 1.95; margin-bottom: 18px; font-weight: 300; text-wrap: pretty; }
+    h2.story-heading { font-family: 'Bodoni Moda', serif; font-size: clamp(32px,4vw,46px); font-weight: 400; color: var(--brown); margin-bottom: 24px; line-height: 1.12; text-wrap: balance; }
+
+    /* Values */
+    .values { background: var(--espresso); padding: 80px 64px; }
+    .values-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; margin-top: 40px; }
+    .value-card { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); padding: 40px 32px; transition: background .25s; }
+    .value-card:hover { background: rgba(255,255,255,.07); }
+    .value-num { font-family: 'Bodoni Moda', serif; font-size: 2.2rem; font-style: italic; color: var(--caramel); margin-bottom: 16px; line-height: 1; }
+    .value-card h3 { font-family: 'Bodoni Moda', serif; font-size: 1.1rem; font-weight: 400; font-style: italic; color: #f5ede2; margin-bottom: 12px; }
+    .value-card p { font-size: .84rem; color: rgba(245,237,226,.5); line-height: 1.8; font-weight: 300; }
+    h2.values-title { font-family: 'Bodoni Moda', serif; font-size: clamp(30px,3.5vw,42px); font-weight: 400; color: #f5ede2; line-height: 1.1; }
+
+    /* Reviews */
+    .reviews { background: var(--off); padding: 80px 64px; }
+    .reviews-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+    .review { background: white; padding: 36px; border: 1px solid var(--border); border-radius: 3px; }
+    .stars { color: var(--caramel); font-size: .85rem; letter-spacing: 3px; margin-bottom: 16px; }
+    .review blockquote { font-family: 'Bodoni Moda', serif; font-style: italic; font-size: 1rem; color: var(--text); line-height: 1.75; margin-bottom: 20px; font-weight: 300; text-wrap: pretty; }
+    .reviewer { font-size: .68rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--caramel); }
+
+    .cta { background: var(--warm); border-top: 1px solid var(--border); padding: 80px 64px; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 48px; }
+    .cta h2 { font-family: 'Bodoni Moda', serif; font-size: clamp(32px,4vw,52px); font-weight: 400; font-style: italic; color: var(--brown); line-height: 1.1; }
+    .cta p { font-size: .88rem; color: var(--muted); margin-top: 10px; font-weight: 300; }
+    .cta-action a { display: inline-block; background: var(--brown); color: white; padding: 16px 40px; text-decoration: none; font-size: .73rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; border-radius: 2px; white-space: nowrap; transition: background .2s, transform .15s; }
+    .cta-action a:hover { background: var(--espresso); transform: translateY(-2px); }
+
+    footer { background: var(--espresso); padding: 32px 64px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-top: 1px solid rgba(255,255,255,.06); }
+    .footer-logo { font-family: 'Bodoni Moda', serif; font-style: italic; font-size: 1.2rem; color: #d4c0a8; font-weight: 400; }
+    footer p { font-size: .72rem; color: rgba(255,255,255,.25); }
+
+    @media (max-width: 960px) {
+      nav { padding: 0 24px; } .nav-links { display: none; }
+      .page-header { padding: 100px 24px 48px; }
+      .story { grid-template-columns: 1fr; padding: 60px 24px; }
+      .story-visual { max-width: 420px; margin: 0 auto; }
+      .values { padding: 60px 24px; }
+      .values-grid, .reviews-grid { grid-template-columns: 1fr; }
+      .reviews { padding: 60px 24px; }
+      .cta { padding: 60px 24px; grid-template-columns: 1fr; }
+      .cta-action a { width: 100%; text-align: center; display: block; }
+      footer { padding: 28px 24px; flex-direction: column; text-align: center; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="bakery.html" class="logo">Flour &amp; Story<small>Artisan Bakery</small></a>
+  <div class="nav-links">
+    <a href="bakery-menu.html">Menu</a>
+    <a href="bakery-custom.html">Custom Orders</a>
+    <a href="bakery-story.html" class="active">Our Story</a>
+    <a href="mailto:hello@flourandstory.com">Visit Us</a>
+  </div>
+  <a href="bakery-menu.html" class="nav-cta">Order Online</a>
+</nav>
+
+<div class="page-header">
+  <h1 class="fade-up">Our Story</h1>
+  <p class="fade-up d1">How a home kitchen in Portland became a neighborhood staple.</p>
+</div>
+
+<section class="story">
+  <div class="story-visual fade-up">
+    <img src="https://images.unsplash.com/photo-1568254183919-78a4f43a2877?auto=format&fit=crop&w=800&q=80" alt="Flour and Story bakery bread display" loading="lazy"/>
+    <div class="story-frame"></div>
+  </div>
+  <div class="story-text fade-up d1">
+    <h2 class="story-heading">A Bakery Born<br>from Passion</h2>
+    <p>Flour & Story started in a home kitchen in 2018 when founder Claire Navarro began selling sourdough loaves to neighbors. What started as a hobby became a calling.</p>
+    <p>Within a year, Claire had a waitlist. By 2020 she opened a small storefront on Maple Street. Today our team of six bakes everything by hand each morning before sunrise.</p>
+    <p>We partner with local farms, use organic flour whenever possible, and believe that good food made with care is always worth it. No shortcuts, no preservatives, just honest craft.</p>
+  </div>
+</section>
+
+<section class="values">
+  <h2 class="values-title fade-up">What We Believe</h2>
+  <div class="values-grid">
+    <div class="value-card fade-up">
+      <div class="value-num">01</div>
+      <h3>Craft Over Convenience</h3>
+      <p>Every loaf is slow-fermented, every croissant laminated by hand. We never cut corners to move faster.</p>
+    </div>
+    <div class="value-card fade-up d1">
+      <div class="value-num">02</div>
+      <h3>Local First</h3>
+      <p>We source from Oregon farms whenever possible and change our menu with the seasons.</p>
+    </div>
+    <div class="value-card fade-up d2">
+      <div class="value-num">03</div>
+      <h3>The Neighborhood Matters</h3>
+      <p>We donate day-old bread to local shelters every evening. A good bakery feeds more than appetites.</p>
+    </div>
+  </div>
+</section>
+
+<section class="reviews">
+  <div class="reviews-grid">
+    <div class="review fade-up">
+      <div class="stars">★★★★★</div>
+      <blockquote>"The sourdough here ruined all other bread for me. I come every Saturday morning and I've never been disappointed."</blockquote>
+      <div class="reviewer">James H.</div>
+    </div>
+    <div class="review fade-up d1">
+      <div class="stars">★★★★★</div>
+      <blockquote>"Ordered a wedding cake and it was absolutely stunning, and delicious. Every guest asked who made it."</blockquote>
+      <div class="reviewer">Maria & Tom S.</div>
+    </div>
+    <div class="review fade-up d2">
+      <div class="stars">★★★★★</div>
+      <blockquote>"The brown butter croissant is life-changing. I've been to bakeries in Paris and this holds up."</blockquote>
+      <div class="reviewer">Danielle R.</div>
+    </div>
+  </div>
+</section>
+
+<div class="cta">
+  <div class="fade-up">
+    <h2>Come Say Hello</h2>
+    <p>Open every day, 7am to 4pm. We'd love to see you.</p>
+  </div>
+  <div class="cta-action fade-up d1"><a href="mailto:hello@flourandstory.com">Get in Touch</a></div>
+</div>
+
+<footer>
+  <div class="footer-logo">Flour &amp; Story</div>
+  <p>842 Maple Street, Portland, OR &nbsp;·&nbsp; (503) 555-0142 &nbsp;·&nbsp; hello@flourandstory.com</p>
+  <p>© 2026 Flour &amp; Story Bakery</p>
+</footer>
+
+<script>
+  document.body.classList.add('js-ready');
+  const obs = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } }), { threshold: 0.1 });
+  document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
